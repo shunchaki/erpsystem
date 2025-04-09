@@ -2,7 +2,7 @@ import React from 'react'
 
 const MeasureType = () => {
   return (
-    <div>measure-type</div>
+    <div>Hello world</div>
   )
 }
 
