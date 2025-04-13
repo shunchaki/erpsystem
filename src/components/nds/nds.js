@@ -1,61 +1,71 @@
-import {useEffect, useState} from 'react';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
+import { useEffect, useState } from 'react';
+import { Tooltip,Paper,Table,TableBody,TableCell,TableContainer,TableHead,TablePagination,TableRow } from '@mui/material';
 import { ApiService } from '../../services/api.service';
 
 const Nds = () => {
+  const [ndsItems, setNdsItem] = useState([]);
+  const [page, setPage] = useState(1); // Page 0 dan boshlanadi
+  const [rowsPerPage, setRowsPerPage] = useState(10); // Dastlabki qatorlar soni 10
 
-  const [ndsItems,setNdsItem]= useState([])
-  
-      useEffect(()=> {
-        ApiService.fetching('wms/nds/all?Params.PageSize=30&Params.PageIndex=1').then(data => setNdsItem())
-      },[])
-      function createData(name, code, population, size) {
-        const density = population / size;
-        return { name, code, population, size, density };
-      }
-      const SelectNds = (data) =>{
-        console.log()
-      }
-      console.log(ndsItems,"nds")
-        const [page, setPage] = useState(0);
-        const [rowsPerPage, setRowsPerPage] = useState(10);
-      
-        const handleChangePage = (event, newPage) => {
-          setPage(newPage);
-        };
-      
-        const handleChangeRowsPerPage = (event) => {
-          setRowsPerPage(+event.target.value);
-          setPage(0);
-        };
-    
-    return (
-    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      <TableContainer sx={{ maxHeight: 600 }}>
-        <Table stickyHeader aria-label="sticky table">
+  useEffect(() => {
+    ApiService.fetching(`wms/nds/all?Params.PageSize=${rowsPerPage}&Params.PageIndex=${page}`).then(data => setNdsItem(SelectNds(data)));
+  }, [page, rowsPerPage]); // page va rowsPerPage o'zgarishi bilan API qayta chaqiriladi
+
+  const SelectNds = (data) => {
+    const transformed = data.map(item => {
+      return {
+        id: item.id,
+        name: item.description,
+        rate: item.rate
+      };
+    });
+    return transformed;
+  };
+
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(1);
+  };
+
+  let index = 0; // Har bir sahifada indeksni to'g'ri hisoblash
+
+  return (
+    <Paper align="right" sx={{ width: '100%', overflow: 'hidden' }}>
+      <TableContainer align="right" sx={{ maxHeight: 790, maxWidth: '70%' }}>
+        <Table stickyHeader aria-label="sticky table" sx={{ background: 'lightblue' }}>
           <TableHead>
             <TableRow>
-              <TableCell>№</TableCell>
-              <TableCell>Название</TableCell>
-              <TableCell>Ставка (%)</TableCell>
+              <TableCell align="right" style={{ minWidth: 10 }}>
+                №
+              </TableCell>
+              <TableCell align="right" style={{ minWidth: 80 }}>
+                Название
+              </TableCell>
+              <TableCell align="right" style={{ minWidth: 50 }}>
+                Ставка (%)
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {ndsItems
-              
+            //  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) // Sahifalash uchun qatorlarni kesib olish
               .map((row) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.rate}>
-                    <TableCell>{ndsItems.length}</TableCell>
-                    <TableCell>{row.name}</TableCell>
-                    <TableCell>{row.rate}%</TableCell>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id} sx={{color:'white'}}>
+                    <TableCell align="right">{++index}</TableCell>
+                    <TableCell align="right">
+                      <Tooltip title={row.name}>
+                        <span>
+                          {row.name.length > 50 ? `${row.name.slice(0, 50)}...` : row.name}
+                        </span>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell align="right">{row.rate}%</TableCell>
                   </TableRow>
                 );
               })}
@@ -63,7 +73,7 @@ const Nds = () => {
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
+        rowsPerPageOptions={[10, 25, 30, 100]}
         component="div"
         count={ndsItems.length}
         rowsPerPage={rowsPerPage}
@@ -73,6 +83,6 @@ const Nds = () => {
       />
     </Paper>
   );
-}
+};
 
 export default Nds;
