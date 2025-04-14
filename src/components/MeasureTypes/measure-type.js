@@ -1,55 +1,96 @@
+import { Link } from "react-router-dom"
+import { useState, useEffect } from "react"
 import {
-  Container,
   TableContainer,
   Table,
   TableHead,
   TableRow,
   TableCell,
   TableBody,
-} from "@mui/material";
+  Paper,
+  TablePagination,
+  Button
+} from "@mui/material"
+import { ApiService } from "../../services/api.service";
 
 const MeasureType = () => {
-  function createData(name, calories, fat, carbs) {
-    return { name, calories, fat, carbs };
-  }
-  const rows = [
-    createData(5, "Kilogram", "kg", 24),
-    createData(4, "Metr", "m", 37),
-    createData(3, "Gradus", "C", 24),
-    createData(2, "Litr", "l", 67),
-    createData(1, "Dona", "ta", 49),
-  ];
-  return (
-    <Container sx={{ display: "flex", justifyContent: "right", alignItems: "right" }}>
-      <TableContainer sx={{with: "695.250px", height: "794px"}}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>№</TableCell>
-            <TableCell align="right">Полное название</TableCell>
-            <TableCell align="right">Короткое название</TableCell>
-            <TableCell align="right">Код</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow
-              key={row.name}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      </TableContainer>
-    </Container>
-  );
-};
+  const [typeItem, setTypeItem] = useState([])
+  const [page, setPage] = useState(0)
+  const [rowsPerPage, setRowsPerPage] = useState(10)
+  const [totalCount, setTotalCount] = useState(0);
 
-export default MeasureType;
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    console.log(event.target.value)
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await ApiService.fetching(`wms/measure-type/all?Params.PageSize=${rowsPerPage}&Params.PageIndex=${page+1}`)
+        setTypeItem(response.data)
+        const pagination = JSON.parse(response.headers.pagination);
+        setTotalCount(pagination.TotalCount);
+      } catch (error) {
+        console.error("Error fetching data:", error)
+      } finally {
+        console.log("Data fetching completed")
+      }
+    }
+    fetchData()
+  }, [page, rowsPerPage])
+
+  return (
+    <>
+    <Link to={"/"}>
+        <Button>Back</Button>
+    </Link>
+    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+      <TableContainer sx={{ maxHeight: 440 }}>
+        <Table stickyHeader aria-label="sticky table">
+          <TableHead>
+            <TableRow>
+              <TableCell>№</TableCell>
+              <TableCell align="right">Полное название</TableCell>
+              <TableCell align="right">Короткое название</TableCell>
+              <TableCell align="right">Код</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+           {typeItem.map((item, index) => (
+             <TableRow
+               key={item.id}
+               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+             >
+               <TableCell component="th" scope="row">
+                 {index + 1}
+               </TableCell>
+               <TableCell align="right">{item.fullTitle}</TableCell>
+               <TableCell align="right">{item.shortTitle}</TableCell>
+               <TableCell align="right">{item.digitalCode}</TableCell>
+             </TableRow>
+           ))}
+         </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[10, 25, 100]}
+        component="div"
+        count={totalCount}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </Paper>
+    </>
+  )
+}
+
+export default MeasureType
