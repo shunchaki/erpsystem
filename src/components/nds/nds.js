@@ -22,7 +22,7 @@ const Nds = () => {
   useEffect(() => {
     ApiService.fetching(
       `wms/nds/all?Params.PageSize=${rowsPerPage}&Params.PageIndex=${page}`
-    ).then((data) => setNdsItem(SelectNds(data)));
+    ).then((data) => setNdsItem(SelectNds(data.data)));
   }, [page, rowsPerPage]); // page va rowsPerPage o'zgarishi bilan API qayta chaqiriladi
 
   const SelectNds = (data) => {
