@@ -16,15 +16,40 @@ import { Link } from "react-router-dom";
 
 const Nds = () => {
   const [ndsItems, setNdsItem] = useState([]);
-  const [page, setPage] = useState(1); // Page 0 dan boshlanadi
-  const [rowsPerPage, setRowsPerPage] = useState(10); // Dastlabki qatorlar soni 10
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [pagination, setPagination] = useState({
+    CurrentPage: 0,
+    TotalPages: 0,
+    TotalCount: 0,
+    HasPrevious: false,
+    HasNext: false,
+  });
 
   useEffect(() => {
-    ApiService.fetching(
-      `wms/nds/all?Params.PageSize=${rowsPerPage}&Params.PageIndex=${page}`
-    ).then((data) => setNdsItem(SelectNds(data.data)));
-  }, [page, rowsPerPage]); // page va rowsPerPage o'zgarishi bilan API qayta chaqiriladi
-
+    const fetchData = async () => {
+      try {
+        const response = await ApiService.fetching(
+          `wms/nds/all?Params.PageSize=${rowsPerPage}&Params.PageIndex=${
+            pagination.CurrentPage + 1
+          }`
+        );
+        setNdsItem(SelectNds(response.data));
+        const p = JSON.parse(response.headers.pagination);
+        setPagination({
+          ...pagination,
+          TotalPages: p.TotalPages,
+          TotalCount: p.TotalCount,
+          HasPrevious: p.HasPrevious,
+          HasNext: p.HasNext,
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        console.log("Data fetching completed");
+      }
+    };
+    fetchData();
+  }, [pagination.CurrentPage, rowsPerPage]); // page va rowsPerPage o'zgarishi bilan API qayta chaqiriladi
   const SelectNds = (data) => {
     const transformed = data.map((item) => {
       return {
@@ -37,12 +62,12 @@ const Nds = () => {
   };
 
   const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+    setPagination({ ...pagination, CurrentPage: newPage });
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
-    setPage(1);
+    setPagination({ ...pagination, CurrentPage: 0 }); // Sahifani 0 ga qaytarish
   };
 
   let index = 0; // Har bir sahifada indeksni to'g'ri hisoblash
@@ -73,8 +98,7 @@ const Nds = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {ndsItems
-                //  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) // Sahifalash uchun qatorlarni kesib olish
+              {ndsItems // Sahifalash uchun qatorlarni kesib olish
                 .map((row) => {
                   return (
                     <TableRow
@@ -104,9 +128,9 @@ const Nds = () => {
         <TablePagination
           rowsPerPageOptions={[10, 25, 30, 100]}
           component="div"
-          count={ndsItems.length}
+          count={pagination.TotalCount}
           rowsPerPage={rowsPerPage}
-          page={page}
+          page={pagination.CurrentPage} // Sahifalar 0 dan boshlanadi
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
