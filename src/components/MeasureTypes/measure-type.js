@@ -20,33 +20,33 @@ const MeasureType = () => {
     createData(1, "Dona", "ta", 49),
   ];
   return (
-    <Container>
-      <TableContainer>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>№</TableCell>
-              <TableCell align="right">Полное название</TableCell>
-              <TableCell align="right">Короткое название</TableCell>
-              <TableCell align="right">Код</TableCell>
+    <Container sx={{ display: "flex", justifyContent: "right", alignItems: "right" }}>
+      <TableContainer sx={{with: "695.250px", height: "794px"}}>
+      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell>№</TableCell>
+            <TableCell align="right">Полное название</TableCell>
+            <TableCell align="right">Короткое название</TableCell>
+            <TableCell align="right">Код</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {rows.map((row) => (
+            <TableRow
+              key={row.name}
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell component="th" scope="row">
+                {row.name}
+              </TableCell>
+              <TableCell align="right">{row.calories}</TableCell>
+              <TableCell align="right">{row.fat}</TableCell>
+              <TableCell align="right">{row.carbs}</TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow
-                key={row.name}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {row.name}
-                </TableCell>
-                <TableCell align="right">{row.calories}</TableCell>
-                <TableCell align="right">{row.fat}</TableCell>
-                <TableCell align="right">{row.carbs}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+          ))}
+        </TableBody>
+      </Table>
       </TableContainer>
     </Container>
   );
