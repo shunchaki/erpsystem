@@ -1,15 +1,23 @@
-import { Container, TableContainer, Table, TableHead, TableRow, TableCell, TableBody,  } from '@mui/material'
+import {
+  Container,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+} from "@mui/material";
 
 const MeasureType = () => {
   function createData(name, calories, fat, carbs) {
     return { name, calories, fat, carbs };
   }
   const rows = [
-    createData(5, 'Kilogram', 'kg', 24),
-    createData(4, 'Metr', 'm', 37),
-    createData(3, 'Gradus', 'C', 24),
-    createData(2, 'Litr', 'l', 67),
-    createData(1, 'Dona', 'ta', 49),
+    createData(5, "Kilogram", "kg", 24),
+    createData(4, "Metr", "m", 37),
+    createData(3, "Gradus", "C", 24),
+    createData(2, "Litr", "l", 67),
+    createData(1, "Dona", "ta", 49),
   ];
   return (
     <Container sx={{ display: "flex", justifyContent: "right", alignItems: "right" }}>
@@ -41,7 +49,7 @@ const MeasureType = () => {
       </Table>
       </TableContainer>
     </Container>
-  )
-}
+  );
+};
 
-export default MeasureType
+export default MeasureType;
