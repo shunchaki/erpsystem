@@ -12,8 +12,8 @@ const MeasureType = () => {
     createData(1, 'Dona', 'ta', 49),
   ];
   return (
-    <Container>
-      <TableContainer>
+    <Container sx={{ display: "flex", justifyContent: "right", alignItems: "right" }}>
+      <TableContainer sx={{with: "695.250px", height: "794px"}}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
