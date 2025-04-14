@@ -13,11 +13,11 @@ import {
 } from "@mui/material"
 import { ApiService } from "../../services/api.service";
 
-const MeasureType = () => {
+const MeasureType = ({search}) => {
   const [typeItem, setTypeItem] = useState([])
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
-  const [totalCount, setTotalCount] = useState(0);
+  const [totalCount, setTotalCount] = useState(0)
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -25,15 +25,16 @@ const MeasureType = () => {
 
   const handleChangeRowsPerPage = (event) => {
     console.log(event.target.value)
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+    setRowsPerPage(+event.target.value)
+    setPage(0)
+  }
 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await ApiService.fetching(`wms/measure-type/all?Params.PageSize=${rowsPerPage}&Params.PageIndex=${page+1}`)
+        const searchQuery = search ? `&Search=${encodeURIComponent(search)}` : "";
+        const response = await ApiService.fetching(`wms/measure-type/all?Params.PageSize=${rowsPerPage}&Params.PageIndex=${page+1}&${searchQuery}`)
         setTypeItem(response.data)
         const pagination = JSON.parse(response.headers.pagination);
         setTotalCount(pagination.TotalCount);
@@ -44,7 +45,7 @@ const MeasureType = () => {
       }
     }
     fetchData()
-  }, [page, rowsPerPage])
+  }, [page, rowsPerPage, search])
 
   return (
     <>
