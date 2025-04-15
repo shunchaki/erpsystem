@@ -10,11 +10,12 @@ const options = {
     Authorization: `Bearer ${token}`,
     "X-User-TimeZone": timeZone,
     Accept: "application/json, text/plain, */*",
-  },
-};
-export const ApiService = {
-  async fetching(url) {
-    const response = await axios.get(`${BASE_URL}/${url}`, options);
-    return response;
-  },
-};
+    "Content-Type": "application/json"
+  }
+}
+export const CreateMeasureType = {
+    async postData(url, data) {
+        const response = await axios.post(`${BASE_URL}/${url}`, data,  options );
+        return response;
+    }
+}
