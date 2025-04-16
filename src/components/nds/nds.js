@@ -15,7 +15,7 @@ import { ApiService } from "../../services/api.service";
 import { Link } from "react-router-dom";
 
 const Nds = () => {
-  const [ndsItems, setNdsItem] = useState([]);
+  const [ndsItems, setNdsItems] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [pagination, setPagination] = useState({
     CurrentPage: 0,
@@ -33,7 +33,7 @@ const Nds = () => {
             pagination.CurrentPage + 1
           }`
         );
-        setNdsItem(SelectNds(response.data));
+        setNdsItems(SelectNds(response.data));
         const p = JSON.parse(response.headers.pagination);
         setPagination({
           ...pagination,
@@ -70,7 +70,7 @@ const Nds = () => {
     setPagination({ ...pagination, CurrentPage: 0 }); // Sahifani 0 ga qaytarish
   };
 
-  let index = 0; // Har bir sahifada indeksni to'g'ri hisoblash
+  // Har bir sahifada indeksni to'g'ri hisoblash
 
   return (
     <>
@@ -99,7 +99,7 @@ const Nds = () => {
             </TableHead>
             <TableBody>
               {ndsItems // Sahifalash uchun qatorlarni kesib olish
-                .map((row) => {
+                .map((row, index) => {
                   return (
                     <TableRow
                       hover
@@ -108,7 +108,7 @@ const Nds = () => {
                       key={row.id}
                       sx={{ color: "white" }}
                     >
-                      <TableCell align="right">{++index}</TableCell>
+                      <TableCell align="right">{index + 1}</TableCell>
                       <TableCell align="right">
                         <Tooltip title={row.name}>
                           <span>
