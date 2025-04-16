@@ -1,6 +1,6 @@
 import { Box, Button, Typography, Modal, TextField } from '@mui/material';
 import { useState } from 'react';
-import { CreateMeasureType } from '../../services/post.service';
+import { CreateApi } from '../../services/post.service';
 
 const ModalMeasureType = ({ onSuccess }) => {
   const [open, setOpen] = useState(false);
@@ -21,7 +21,7 @@ const ModalMeasureType = ({ onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await CreateMeasureType.postData('wms/measure-type', data);
+      const response = await CreateApi.postData('wms/measure-type', data);
       if (response) console.log(response.data);
       handleClose();
       onSuccess();
