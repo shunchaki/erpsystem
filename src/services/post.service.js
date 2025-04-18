@@ -13,7 +13,7 @@ const options = {
     "Content-Type": "application/json"
   }
 }
-export const CreateMeasureType = {
+export const CreateApi = {
     async postData(url, data) {
         const response = await axios.post(`${BASE_URL}/${url}`, data,  options );
         return response;
